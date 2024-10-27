@@ -1,0 +1,49 @@
+.TopLeft{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    cursor: pointer;
+
+}
+.profile{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+
+}
+.profile h5{
+    font-size: 15px;
+    margin: 0;
+}
+.profile-img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: skyblue;
+}
+.TopLeft svg{
+    font-size: 25px;
+}
+.notify-cnt{
+    width: 17px;
+    height: 17px;
+    display: flex;
+    background-color: red;
+    position: absolute;
+    top: -2px;
+    left: 11px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.notify-cnt p{
+    margin: 0;
+    font-size: 8px;
+    color: white;
+    font-weight: 700;
+
+}

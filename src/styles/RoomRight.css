@@ -1,0 +1,10 @@
+.RoomRight{
+    width: 40%;
+
+}
+.users-connected h5{
+    margin: 0;
+    text-align: right;
+    margin-bottom: 10px;
+
+}

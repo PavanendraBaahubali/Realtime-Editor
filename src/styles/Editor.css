@@ -1,0 +1,12 @@
+.Editor{
+    width: 70%;
+    height: 100vh;
+}
+.quill{
+    height: 100%;
+}
+
+.room-editor{
+    width: 100%;
+    height: 100vh;
+}

@@ -1,0 +1,8 @@
+.Blur{
+    width: 100%;
+    background-color: black;
+    opacity: 80%;
+    height: 100vh;
+    position: fixed;
+    z-index: 0;
+}

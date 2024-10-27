@@ -1,0 +1,17 @@
+.CreateRoom{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    border-bottom: 1px solid;
+    padding-bottom: 18px;
+    cursor: pointer;
+}
+.CreateRoom svg{
+    font-size: 22px;
+}
+.CreateRoom h2{
+    margin: 0;
+    font-size: 18px;
+}

@@ -1,0 +1,65 @@
+.Sidebar{
+    height: 100vh;
+    border: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    width: 25%;
+    padding: 30px;
+    box-sizing: border-box;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+}
+.side-nav{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    box-sizing: border-box;
+}
+.side-nav a {
+    text-decoration: none;
+    color: black;
+}
+.side-nav .active{
+    background-color: aqua;
+    width: 100%;
+    border-radius: 12px;
+    color: black;
+
+}
+.side-nav li{
+    width: 100%;
+    padding: 10px;
+    list-style: none;
+    box-sizing: border-box;
+    text-align: left;
+    padding-left: 30px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.side-nav li svg{
+    font-size: 18px;
+
+}
+.side-nav li:hover{
+    background-color: aqua;
+    transition: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.log-out{
+    width: 30%;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgb(34, 168, 222);
+    width: 100%;
+    border: none;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}

@@ -1,0 +1,13 @@
+.TopBar{
+    width: 100%;
+    padding: 20px 35px 20px 35px;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    align-items: center;
+    border-bottom: 2px solid #e4e4e4;
+}
+.TopBar h2{
+    margin: 0;
+    font-style: italic;
+}

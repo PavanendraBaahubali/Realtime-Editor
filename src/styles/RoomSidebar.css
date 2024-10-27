@@ -1,0 +1,32 @@
+.RoomSidebar{
+    height: 400px;
+    border-radius: 64px;
+    width: 5%;
+    background-color: #AAF3FB;
+    box-sizing: border-box;
+    padding: 0px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-left: 15px;
+    padding-right: 15px;
+
+}
+.roomside-nav{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+    align-items: center;
+    justify-content: center;
+}
+.roomside-nav li{
+    padding: 10px;
+    cursor: pointer;
+}
+.roomside-nav li:hover{
+    background-color: white;
+    border-radius: 50%;
+}
+.roomside-nav li svg{
+    font-size: 20px;
+}

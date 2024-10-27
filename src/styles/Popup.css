@@ -1,0 +1,43 @@
+.Popup{
+    width: 29%;
+    border-radius: 10px;
+    background-color: rgb(255 255 255);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 2px solid #d6d6d6;
+    padding: 20px;
+    position: absolute;
+    margin: 0 auto;
+    right: 34%;
+    top: 40%;
+    z-index: 1;
+}
+.popup-close{
+    display: none;
+}
+.Popup button{
+    width: 30%;
+    border-radius: 20px;
+    border: none;
+    background-color: #22a8de;
+    padding: 10px;
+    font-weight: 600;
+    color: white;
+    margin: 0 auto;
+    cursor: pointer;
+}
+.Popup input{
+    width: 100%;
+    border-radius: 19px;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid;
+}
+.close-btn{
+    position: absolute;
+    right: 10px;
+    top: 12px;
+    font-size: 10px;
+    cursor: pointer;
+}

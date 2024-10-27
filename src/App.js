@@ -1,23 +1,37 @@
-import logo from './logo.svg';
 import './App.css';
+import AuthLayout from './layouts/AuthLayout';
+import HomeLayout from './layouts/HomeLayout';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import RoomLayout from './layouts/RoomLayout';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
+  const token = localStorage.getItem('token');
+  console.log(token);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <Routes>
+          {
+            !token ? 
+            <Route path="/auth" element={<AuthLayout />} />
+            :
+            <Route path = '/auth/*' element = {<Navigate to = '/editor' ></Navigate>} />
+          }
+
+          <Route path="/editor" element={
+            <PrivateRoute>
+              <HomeLayout />
+            </PrivateRoute>
+          } />
+
+          <Route path="/room/:roomId" element={
+            <PrivateRoute>
+              <RoomLayout />
+            </PrivateRoute>
+          } />
+        </Routes>
+      </Router>
     </div>
   );
 }
