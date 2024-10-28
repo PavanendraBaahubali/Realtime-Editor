@@ -41,7 +41,6 @@ const Editor = ({ styleName }) => {
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     // Fetch initial content from the API
-
     useEffect(() => {
         const fetchInitialContent = async () => {
             try {
@@ -138,21 +137,17 @@ const Editor = ({ styleName }) => {
     }, []);
 
     // Function to save content to the database
-   // In Editor.jsx
 
 const saveContentToDatabase = useCallback(async () => {
   if (contentRef.current && !isSaving && hasUnsavedChanges) {
       setIsSaving(true);
       try {
-
-        console.log('version inside save data', version);
-
           const response = await fetch(`${process.env.REACT_APP_API_URL}/room/${roomId}/save`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                   content: contentRef.current,
-                  version: version // Send the current version
+                  version: version 
               }),
           });
 
@@ -163,6 +158,7 @@ const saveContentToDatabase = useCallback(async () => {
               setError(null);
               setLastSaved(new Date().toLocaleTimeString());
               setHasUnsavedChanges(false);
+
           } else if (data.status === 'CONFLICT') {
               setError("Content was updated by another user. Refreshing...");
 
@@ -192,7 +188,6 @@ const saveContentToDatabase = useCallback(async () => {
 
 
     // Save content at regular intervals
-
     useEffect(() => {
       if (hasUnsavedChanges) {
         const timeoutId = setTimeout(() => {
@@ -203,22 +198,30 @@ const saveContentToDatabase = useCallback(async () => {
       }
     }, [hasUnsavedChanges, saveContentToDatabase]);
 
-  //   useEffect(() => {
-  //     const intervalId = setInterval(() => {
-  //       console.log('im in set interval save db timer', hasUnsavedChanges)
-  //         if (hasUnsavedChanges) {
-  //             saveContentToDatabase();
-  //         }
-  //     }, 10000); 
-
-  //     return () => clearInterval(intervalId);
-  // }, [saveContentToDatabase, hasUnsavedChanges]);
-
-
 
     const handleManualSave = async () => {
       await saveContentToDatabase();
   };
+
+
+
+  const getRowIdFromCursor = (editor) => {
+    const range = editor.getSelection();
+    console.log('range', range);
+    if (!range) return null;
+    const [line] = editor.getLine(range.index);
+    console.log(line);
+    return editor.getIndex(line);
+  };
+
+  const test = () => {
+    const editor = quillRef.current.getEditor();
+    const currentRowId = getRowIdFromCursor(editor);
+    console.log('row id', currentRowId)
+    console.log('editor', editor)
+  }
+ 
+  test();
 
     return (
       <div className={styleName}>
