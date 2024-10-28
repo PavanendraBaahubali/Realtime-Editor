@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import '../styles/Editor.css';
 import "react-quill/dist/quill.snow.css";
 import QuillEditor from "react-quill";
@@ -33,14 +33,23 @@ const Editor = ({ styleName }) => {
     const contentRef = useRef('');
     const isLocalUpdate = useRef(false);
     const lastCursorPosition = useRef(null);
+    
+    const [version, setVersion] = useState(0);
+    const [error, setError] = useState(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const [lastSaved, setLastSaved] = useState(null);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     // Fetch initial content from the API
+
     useEffect(() => {
         const fetchInitialContent = async () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_API_URL}/room/${roomId}`);
                 const data = await response.json();
-                contentRef.current = data.content;
+                contentRef.current = data.roomData.content;
+
+                setVersion(data.roomData.version);
 
                 if (quillRef.current) {
                     const editor = quillRef.current.getEditor();
@@ -53,6 +62,7 @@ const Editor = ({ styleName }) => {
 
         fetchInitialContent();
     }, [roomId]);
+
 
     // Store cursor position before any content update
     const storeCursorPosition = useCallback(() => {
@@ -106,8 +116,10 @@ const Editor = ({ styleName }) => {
     ).current;
 
     const handleOnChange = (newContent) => {
+      console.log('handle on change', newContent !== contentRef.current)
         if (newContent !== contentRef.current) {
             storeCursorPosition();
+            setHasUnsavedChanges(true)
             contentRef.current = newContent;
             debounceHandleChange(newContent);
         }
@@ -126,37 +138,117 @@ const Editor = ({ styleName }) => {
     }, []);
 
     // Function to save content to the database
-    const saveContentToDatabase = useCallback(async () => {
-        if (contentRef.current) {
-            try {
-                await fetch(`${process.env.REACT_APP_API_URL}/room/${roomId}/save`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: contentRef.current }),
-                });
-            } catch (error) {
-                console.error("Error saving content to database:", error);
-            }
-        }
-    }, [roomId]);
+   // In Editor.jsx
+
+const saveContentToDatabase = useCallback(async () => {
+  if (contentRef.current && !isSaving && hasUnsavedChanges) {
+      setIsSaving(true);
+      try {
+
+        console.log('version inside save data', version);
+
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/room/${roomId}/save`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  content: contentRef.current,
+                  version: version // Send the current version
+              }),
+          });
+
+          const data = await response.json();
+          console.log('data inside save data', data);
+          if (data.status === 'SUCCESS') {
+              setVersion(data.version);
+              setError(null);
+              setLastSaved(new Date().toLocaleTimeString());
+              setHasUnsavedChanges(false);
+          } else if (data.status === 'CONFLICT') {
+              setError("Content was updated by another user. Refreshing...");
+
+              // Fetch the latest content and update the state
+              const refreshResponse = await fetch(`${process.env.REACT_APP_API_URL}/room/${roomId}`);
+              const refreshData = await refreshResponse.json();
+
+              if (refreshData.status === 'SUCCESS') {
+                  contentRef.current = refreshData.content;
+                  setVersion(refreshData.version);
+                  
+                  if (quillRef.current) {
+                      const editor = quillRef.current.getEditor();
+                      editor.setContents(editor.clipboard.convert(refreshData.content));
+                  }
+              }
+          }
+      } catch (error) {
+          console.log("Error saving content to database:", error);
+          setError("Failed to save changes. Please try again.");
+      } finally {
+          setIsSaving(false);
+          setHasUnsavedChanges(false);
+      }
+  }
+}, [roomId, version, isSaving, hasUnsavedChanges]);
+
 
     // Save content at regular intervals
+
     useEffect(() => {
-        const intervalId = setInterval(saveContentToDatabase, 10000);
-        return () => clearInterval(intervalId);
-    }, [saveContentToDatabase]);
+      if (hasUnsavedChanges) {
+        const timeoutId = setTimeout(() => {
+          saveContentToDatabase();
+        }, 10000); // Adjust the delay as needed
+    
+        return () => clearTimeout(timeoutId);
+      }
+    }, [hasUnsavedChanges, saveContentToDatabase]);
+
+  //   useEffect(() => {
+  //     const intervalId = setInterval(() => {
+  //       console.log('im in set interval save db timer', hasUnsavedChanges)
+  //         if (hasUnsavedChanges) {
+  //             saveContentToDatabase();
+  //         }
+  //     }, 10000); 
+
+  //     return () => clearInterval(intervalId);
+  // }, [saveContentToDatabase, hasUnsavedChanges]);
+
+
+
+    const handleManualSave = async () => {
+      await saveContentToDatabase();
+  };
 
     return (
-        <div className={styleName}>
-            <QuillEditor
-                ref={quillRef}
-                className='quill-editor'
-                theme={'snow'}
-                defaultValue={contentRef.current}
-                onChange={handleOnChange}
-                modules={modules}
-            />
-        </div>
+      <div className={styleName}>
+      <div className="editor-header">
+          {error && (
+              <div className="error-message">
+                  {error}
+              </div>
+          )}
+          <div className="save-status">
+              {isSaving && <span>Saving...</span>}
+              {lastSaved && <span>Last saved at {lastSaved}</span>}
+              <button 
+                  onClick={handleManualSave} 
+                  disabled={isSaving}
+                  className="save-button"
+              >
+                  Save Now
+              </button>
+          </div>
+      </div>
+      <QuillEditor
+          ref={quillRef}
+          className='quill-editor'
+          theme={'snow'}
+          defaultValue={contentRef.current}
+          onChange={handleOnChange}
+          modules={modules}
+      />
+  </div>
     );
 };
 

@@ -23,8 +23,7 @@ const RoomMain = () => {
   useEffect(() => {
       axios.get(`${process.env.REACT_APP_API_URL}/room/${roomId}`)
       .then((res) => {
-        console.log(res.data);
-        dispatch(roomData(res.data))
+        dispatch(roomData(res.data.roomData))
       })
       .catch((err) => console.log(err.message));
 

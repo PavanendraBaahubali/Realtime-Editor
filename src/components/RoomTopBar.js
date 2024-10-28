@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 
 const RoomTopBar = () => {
   const roomData = useSelector((state) => state.room);
-
+console.log({roomData})
   return (
     <div className='RoomTopBar'>
         <div className='room-info'>
