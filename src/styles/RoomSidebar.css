@@ -11,6 +11,10 @@
     padding-right: 15px;
 
 }
+.roomside-nav a{
+    text-decoration: none;
+    color: black;
+}
 .roomside-nav{
     display: flex;
     flex-direction: column;

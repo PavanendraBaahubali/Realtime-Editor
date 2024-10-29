@@ -6,13 +6,14 @@ import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import NoMeetingRoomIcon from '@mui/icons-material/NoMeetingRoom';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import { NavLink } from 'react-router-dom';
 
 const RoomSidebar = () => {
   return (
     <div className='RoomSidebar'>
         <div className='roomside-nav'>
             <li><HomeIcon /></li>
-            <li><BorderColorIcon /></li>
+            <NavLink to= '/editor' ><li><BorderColorIcon /></li></NavLink>
             <li><MeetingRoomIcon /></li>
             <li><NoMeetingRoomIcon /></li>
             <li><GroupAddIcon /></li>

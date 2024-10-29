@@ -6,10 +6,12 @@ const ConnectedUses = () => {
     const roomData = useSelector((state) => state.room);
     const connectedUsers = roomData.connectedUsers;
 
+    const noOfUsers = connectedUsers ? connectedUsers.length : 0;
+
   return (
     <div className='ConnectedUses'>
         <div className='connectedUsers-head'>
-            <h3>{'Connected Users (0)'}</h3>
+            <h3>{`Connected Users (${noOfUsers})`}</h3>
             
 
         </div>

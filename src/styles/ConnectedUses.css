@@ -29,16 +29,18 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    background-color: bisque;
+    background-color: #efeeee;
     padding: 10px;
     box-sizing: border-box;
     gap: 10px;
     align-items: center;
     border-radius: 10px;
+    cursor: pointer;
 }
 .user-info h4{
     margin: 0;
     font-size: 13px;
+    font-weight: 600;
 }
 .user-info svg{
     cursor: pointer;

@@ -23,6 +23,9 @@
     height: 30px;
     border-radius: 50%;
     background-color: skyblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .TopLeft svg{
     font-size: 25px;
