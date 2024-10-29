@@ -43,9 +43,7 @@ A real-time collaborative text editor built using **React**, **Quill** for rich 
    git clone https://github.com/your-username/collaborative-text-editor.git
    cd collaborative-text-editor
    
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/your-username/collaborative-text-editor.git
-   cd collaborative-text-editor
+![join](assets/join.gif)
+
     
 
