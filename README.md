@@ -63,7 +63,7 @@ A real-time collaborative text editor built using **React**, **Quill** for rich 
    - Enter a **Room Name** in the input field.
    - Click **Create** to set up the room.
 
-![join](./assets/create.gif)
+![create](./assets/create.gif)
 
 4. **Joining a Room**:
    - Go to the **Join Room** section.
@@ -72,7 +72,7 @@ A real-time collaborative text editor built using **React**, **Quill** for rich 
 
 ![join](./assets/join.gif)
 
-5. **Chatting in a Room**:
+5. **Editing in a Room**:
    - Once inside the room, people can join the room with roomId. And whatever changes you made in the editor will reflect to other who are in the room.
 
 6. **Logging Out**: To log out, click on your profile icon in the top right corner and select **Logout**.
