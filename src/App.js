@@ -14,7 +14,7 @@ function App() {
         <Routes>
           {
             !token ? 
-            <Route path="/auth" element={<AuthLayout />} />
+            <Route path = '/auth' element = {<AuthLayout />} />
             :
             <Route path = '/auth/*' element = {<Navigate to = '/editor' ></Navigate>} />
           }

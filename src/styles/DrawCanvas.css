@@ -1,0 +1,93 @@
+.DrawCanvas{
+    width: 60%;
+    height: 300px;
+    border-radius: 20px;
+    background-color: rgb(0, 0, 0);
+    border: 2px solid rgb(220, 220, 220);
+    position: absolute;
+    right: 6%;
+    z-index: 1;
+    padding: 15px;
+    overflow: hidden;
+    bottom: -18%;
+}
+.DrawCanvas-expand{
+    width: 100%;
+    box-sizing: border-box;
+    height: 100vh;
+    background-color: rgb(0, 0, 0);
+    position: fixed;
+    right: 0;
+    z-index: 1;
+    padding: 15px;
+    overflow: hidden;
+}
+.canvas-wrapper{
+    border-radius: 20px;
+    border-color: black;
+    height: 100%;
+}
+.draw-expand{
+    display: flex;
+    gap: 10px;
+    color: white;
+    align-items: center;
+    position: relative;
+}
+.expand{
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+}
+.draw-expand svg{
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+}
+.draw-autosave{
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+.draw-autosave svg{
+    cursor: pointer;
+}
+.draw-autosave p{
+    font-size: 13px;
+    align-items: center;
+}
+
+.tools{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+
+}
+.tool, 
+.tool-active
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 10px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    color: white;
+}
+.tool:hover,
+.tool-active
+{
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.tool:hover svg,
+.tool-active svg{
+    color: black;
+    
+}

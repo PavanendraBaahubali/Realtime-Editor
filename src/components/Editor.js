@@ -1,414 +1,195 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
-import '../styles/Editor.css';
-import "react-quill/dist/quill.snow.css";
-import QuillEditor from "react-quill";
-import socket from '../socket.js';
-import { useParams } from 'react-router-dom';
-import _ from 'lodash';
+import { useCallback, useEffect, useRef, useState } from "react";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
+import { useParams } from "react-router-dom";
+import socket from "../socket";
+import "../styles/Editor.css";
 
-const modules = {
-    toolbar: {
-        container: [
-            [{ header: [2, 3, 4, false] }],
-            ["bold", "italic", "underline", "blockquote"],
-            [{ color: [] }],
-            [
-                { list: "ordered" },
-                { list: "bullet" },
-                { indent: "-1" },
-                { indent: "+1" },
-            ],
-            ["link", "image"],
-            ["clean"],
-        ],
-    },
-    clipboard: {
-        matchVisual: true,
-    },
-};
+const SAVE_INTERVAL_MS = 10000;
+const TOOLBAR_OPTIONS = [
+  [{ header: [1, 2, 3, 4, 5, 6, false] }],
+  [{ font: [] }],
+  [{ list: "ordered" }, { list: "bullet" }],
+  ["bold", "italic", "underline"],
+  [{ color: [] }, { background: [] }],
+  [{ script: "sub" }, { script: "super" }],
+  [{ align: [] }],
+  ["clean"],
+];
 
-const Editor = ({ styleName }) => {
-    const { roomId } = useParams();
-    const userId = localStorage.getItem('userId')
+export default function TextEditor({
+  setSaving,
+  setError,
+  cursorDivRef,
+  setQuill,
+  quill,
+}) {
+  // const [quill, setQuill] = useState()
 
-    const quillRef = useRef(null);
-    const contentRef = useRef('');
-    const isLocalUpdate = useRef(false);
-    const lastCursorPosition = useRef(null);
-    
-    // const [version, setVersion] = useState(0);
-    const [error, setError] = useState(null);
-    const [isSaving, setIsSaving] = useState(false);
-    const [lastSaved, setLastSaved] = useState(null);
-    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const { roomId } = useParams();
+  const userName = localStorage.getItem("userName");
 
-    const [lockedRows, setLockedRows] = useState([]);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [isTyping, setTyping] = useState(false);
 
-    const [isTriggered, setTriggered] = useState(false);
+  const userId = localStorage.getItem("userId");
+  const debounce = useRef();
 
-    const userName = localStorage.getItem('userName');
+  const getRowIdFromCursor = useCallback(() => {
+    if (!quill) return;
+    const range = quill.getSelection();
+    if (!range) return null;
+    const [line] = quill.getLine(range.index);
+    console.log("line", line);
+    return quill.getIndex(line);
+  }, [quill]);
 
-    // Fetch initial content from the API
-    
-    useEffect(() => {
-        const fetchInitialContent = async () => {
-            try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/room/${roomId}`);
-                const data = await response.json();
-                contentRef.current = data.roomData.content;
+  useEffect(() => {
+    if (socket == null || quill == null) return;
+    setQuill(quill);
+    socket.once("load-document", (document) => {
+      quill.setContents(document);
+      quill.enable();
+    });
 
-                // setVersion(data.roomData.version);
+    socket.emit("get-document", roomId);
+  }, [quill, roomId, setQuill]);
 
-                if (quillRef.current) {
-                    const editor = quillRef.current.getEditor();
-                    editor.setContents(editor.clipboard.convert(contentRef.current));
-                }
-            } catch (error) {
-                console.error("Error fetching initial content:", error);
-            }
-        };
+  // save doc
+  useEffect(() => {
+    if (socket == null || quill == null) return;
 
-        fetchInitialContent();
-    }, [roomId]);
+    if (hasChanges) {
+      const interval = setTimeout(() => {
+        console.log(quill.getContents());
+        setSaving(true);
+        socket.emit("save-document", { roomId, data: quill.getContents() });
+      }, SAVE_INTERVAL_MS);
 
+      socket.on("data-saved", () => {
+        setSaving(false);
+        setHasChanges(false);
+      });
 
-    // Store cursor position before any content update
-    const storeCursorPosition = useCallback(() => {
-        if (quillRef.current) {
-            const editor = quillRef.current.getEditor();
-            lastCursorPosition.current = editor.getSelection();
-        }
-    }, []);
-
-    // Restore cursor position after content update
-    const restoreCursorPosition = useCallback(() => {
-        if (quillRef.current && lastCursorPosition.current) {
-            const editor = quillRef.current.getEditor();
-            // Small delay to ensure content is fully updated
-            setTimeout(() => {
-                editor.setSelection(lastCursorPosition.current);
-            }, 0);
-        }
-    }, []);
-
-    // Handle updates from other clients
-    useEffect(() => {
-        const handleUpdatedContent = (newContent) => {
-            if (newContent !== contentRef.current && quillRef.current && !isLocalUpdate.current) {
-                const editor = quillRef.current.getEditor();
-                storeCursorPosition();
-                
-                contentRef.current = newContent;
-                editor.setContents(editor.clipboard.convert(newContent));
-                
-                restoreCursorPosition();
-            }
-        };
-
-        socket.on('updated-content', handleUpdatedContent);
-
-        return () => {
-            socket.off('updated-content', handleUpdatedContent);
-        };
-    }, [storeCursorPosition, restoreCursorPosition]);
-
-    // Debounced function to handle local content changes
-    const debounceHandleChange = useRef(
-        _.debounce((newContent) => {
-            isLocalUpdate.current = true;
-            socket.emit('content-update', { roomId, content: newContent });
-            setTimeout(() => {
-                isLocalUpdate.current = false;
-            }, 100);
-        }, 300)
-    ).current;
-
-
-
-
-    
-// --------------------------------
-        const getRowIdFromCursor = (editor) => {
-          const range = editor.getSelection();
-          if (!range) return null;
-          const [line] = editor.getLine(range.index);
-          return editor.getIndex(line);
-        };
-
-
-        // Track typing activity and lock/unlock rows
-        const typingTimeouts = useRef({}); // Stores timeouts to handle row unlocking
-
-        // Lock a row on typing start
-        const lockRow = (rowId) => {
-          socket.emit('lock-row', { roomId, rowId, userId });
-        };
-
-      // Unlock a row after typing stops
-      const unlockRow = (rowId) => {
-        socket.emit('unlock-row', { roomId, rowId, userId });
+      return () => {
+        clearTimeout(interval);
       };
+    }
+  }, [quill, roomId, hasChanges, setSaving]);
 
-      // Handle typing activity within a specific row
-      const handleTypingActivity = (rowId) => {
-        
-        if (typingTimeouts.current[rowId]) clearTimeout(typingTimeouts.current[rowId]);
+  useEffect(() => {
+    if (socket == null || quill == null) return;
 
-        lockRow(rowId);
-        typingTimeouts.current[rowId] = setTimeout(() => {
-          unlockRow(rowId);
-        }, 2000); // Unlock after 2 seconds of inactivity
-      };
-
-// ------------------------------------
-
-
-    const handleOnChange = (newContent) => {
-        try{
-          if (newContent !== contentRef.current) {
-
-            storeCursorPosition();
-            const editor = quillRef.current.getEditor();
-            const currentRowId = getRowIdFromCursor(editor);
-            
-            
-            
-            
-              let found = false;
-
-              lockedRows.forEach((lock) => {
-
-                console.log('locked rows', lock.rowId)
-                console.log('current row id', currentRowId)
-
-                if (lock.rowId === currentRowId){
-                  if (lock.userId === userId)
-                  {
-                    found = true;
-                    handleTypingActivity(currentRowId);
-                  }
-                  else
-
-                    throw new Error("Content was updated by another user. Refreshing...");
-                }
-              })
-              if (!found){
-                
-
-                handleTypingActivity(currentRowId);
-              }
-             
-
-            setHasUnsavedChanges(true)
-            contentRef.current = newContent;
-            debounceHandleChange(newContent);
-        }
-        }
-        catch(err){
-          setError(err.message);
-          setTriggered(true);
-            
-        }
-
-        
+    const handler = (delta) => {
+      console.log(delta);
+      quill.updateContents(delta);
     };
+    socket.on("receive-changes", handler);
 
-    useEffect(() => {
-        const refresh = async() =>  {
+    return () => {
+      socket.off("receive-changes", handler);
+    };
+  }, [quill]);
 
-            const refreshResponse = await fetch(`${process.env.REACT_APP_API_URL}/room/${roomId}`);
-            const refreshData = await refreshResponse.json();
-            console.log(refreshData)
+  useEffect(() => {
+    const handleLock = (locks) => {
+      console.log("locks", locks);
+    };
+    socket.on("lock-activated", handleLock);
 
-            if (refreshData.status === 'SUCCESS') {
-                contentRef.current = refreshData.roomData.content;
+    // socket.on('lock-released', unlocked)
 
-                console.log(contentRef.current);
+    const handleError = (err) => {
+      setError(err);
+      console.log(err);
+    };
+    socket.on("error", handleError);
 
-                if (quillRef.current) {
-                    const editor = quillRef.current.getEditor();
-                    editor.setContents(editor.clipboard.convert(refreshData.roomData.content));
-                  }
-              }
-          }
+    return () => {
+      socket.off("lock-activated", handleLock);
+      socket.off("error", handleError);
+    };
+  }, [userId, isTyping, getRowIdFromCursor, setError]);
 
-          socket.on("connect", () => {
-            console.log("Connected with socket ID:", socket.id);
-      
-            // Emit 'join-room' event with necessary info after connection
-            socket.emit('join-room', { roomId, userId, userName });
-          });
+  // Setup stopTyping and whoIsTyping
+  const stopTyping = useCallback(() => {
+    socket.emit("stop-typing", { userId, roomId });
+  }, [userId, roomId]);
 
+  const whoIsTyping = useCallback(() => {
+    const range = quill.getSelection();
+    if (range) {
+      console.log("typing activated");
+      socket.emit("who-is-typing", {
+        userId,
+        roomId,
+        userName,
+        caretIndex: range.index,
+      });
+    }
+  }, [quill, roomId, userId, userName]);
 
-          refresh();
-    }, [isTriggered, roomId, userName, userId])
+  // Text change handler
+  const handleTextChange = useCallback(
+    (delta, oldDelta, source) => {
+      if (source !== "user") return;
+      setHasChanges(true);
+      whoIsTyping();
+      socket.emit("send-changes", { delta, roomId });
 
-    // listen lock statuses
-    useEffect(() => {
+      // Start or reset typing timeout
+      if (debounce.current) clearTimeout(debounce.current);
+      debounce.current = setTimeout(() => {
+        stopTyping();
+      }, 4000);
+    },
+    [stopTyping, whoIsTyping, roomId]
+  );
 
-      socket.on('row-lock-status-add', ({rowId, userId, isLocked}) => {
-        
+  // Attach listeners with useEffect
+  useEffect(() => {
+    if (!socket || !quill) return;
 
-        setLockedRows((prev) => {
-          const isRowAlreadyLocked = prev.some((row) => row.rowId === rowId);
-        
-          if (!isRowAlreadyLocked) {
-            return [...prev, { rowId, userId }];
-          }
-        
-          return prev;
-        });
-        
-      })
+    quill.on("text-change", handleTextChange);
 
-      socket.on('row-lock-status-remove', ({rowId, userId, isLocked}) => {
-        setLockedRows((prevLockedRows) => 
-          prevLockedRows.filter((lock) => lock.rowId !== rowId)
-        );        
+    return () => {
+      quill.off("text-change", handleTextChange);
+      clearTimeout(debounce.current); // Clear timeout on unmount
+    };
+  }, [quill, handleTextChange]);
 
-    })
-    }, [])
+  // Optional: Clean up debounce when the component unmounts
+  useEffect(() => {
+    return () => clearTimeout(debounce.current);
+  }, []);
 
-    
+  const wrapperRef = useCallback(
+    (wrapper) => {
+      if (wrapper == null) return;
 
+      wrapper.innerHTML = "";
+      const editor = document.createElement("div");
+      wrapper.append(editor);
+      const q = new Quill(editor, {
+        theme: "snow",
+        modules: { toolbar: TOOLBAR_OPTIONS },
+      });
+      // q.disable()
+      q.setText("Loading...");
+      setQuill(q);
+    },
+    [setQuill]
+  );
 
-
-    // Track cursor position changes
-    useEffect(() => {
-        if (quillRef.current) {
-            const editor = quillRef.current.getEditor();
-            editor.on('selection-change', (range) => {
-                if (range) {
-                    lastCursorPosition.current = range;
-                }
-            });
-        }
-    }, []);
-
-    // Function to save content to the database
-    const saveContentToDatabase = useCallback(async () => {
-  if (contentRef.current && !isSaving && hasUnsavedChanges) {
-      setIsSaving(true);
-      try {
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/room/${roomId}/save`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                  content: contentRef.current,
-                  // version: version ,
-                  rowId : lockedRows.rowId,
-                  userId : lockedRows.userId,
-
-              }),
-          });
-
-          const data = await response.json();
-          
-
-          
-
-          if (data.status === 'SUCCESS') {
-              // setVersion(data.version);
-              setError(null);
-              setLastSaved(new Date().toLocaleTimeString());
-              setHasUnsavedChanges(false);
-
-          } else if (data.status === 'CONFLICT') {
-              setError("Content was updated by another user. Refreshing...");
-
-              // Fetch the latest content and update the state
-              const refreshResponse = await fetch(`${process.env.REACT_APP_API_URL}/room/${roomId}`);
-              const refreshData = await refreshResponse.json();
-            if (refreshData.status === 'SUCCESS') {
-                  contentRef.current = refreshData.content;
-                  // setVersion(refreshData.version);
-                  
-                  if (quillRef.current) {
-                      const editor = quillRef.current.getEditor();
-                      editor.setContents(editor.clipboard.convert(refreshData.content));
-                  }
-              }
-          }
-      } catch (error) {
-          
-          setError("Failed to save changes. Please try again.");
-      } finally {
-          setIsSaving(false);
-          setHasUnsavedChanges(false);
-      }
-  }
-      }, [roomId, isSaving, hasUnsavedChanges, lockedRows]);
-
-
-    // Save content at regular intervals
-    useEffect(() => {
-      if (hasUnsavedChanges) {
-        const timeoutId = setTimeout(() => {
-          saveContentToDatabase();
-        }, 10000); // Adjust the delay as needed
-    
-        return () => clearTimeout(timeoutId);
-      }
-    }, [hasUnsavedChanges, saveContentToDatabase]);
-
-
-    const handleManualSave = async () => {
-      await saveContentToDatabase();
+  const style = {
+    width: "100%",
+    height: "100vh",
+    position: "relative",
   };
 
-
-
-  // ----------------------TEST----------------
-  // Helper function to identify a row ID based on the cursor position or text structure.
-    return (
-      <div className={styleName}>
-        {
-            styleName === "room-editor" && 
-<div className="editor-header">
-          {error && (
-              <div className="error-message">
-                  {error}
-              </div>
-          )}
-          <div className="save-status">
-              {isSaving && <span>Saving...</span>}
-              {lastSaved && <span>Last saved at {lastSaved}</span>}
-              <button 
-                  onClick={handleManualSave} 
-                  disabled={isSaving}
-                  className="save-button"
-              >
-                  Save Now
-              </button>
-          </div>
-      </div>
-        }
-
-    {
-            styleName === "room-editor" ?
-            <QuillEditor
-            ref={quillRef}
-            className='quill-editor'
-            theme={'snow'}
-            defaultValue={contentRef.current}
-            onChange={handleOnChange}
-            modules={modules}
-        />
-
-
-        :
-
-        <QuillEditor
-        className='quill-editor'
-        theme={'snow'}
-        modules={modules}
-    />
-
-    }
-      
-     
-  </div>
-    );
-};
-
-export default Editor;
+  return (
+    <>
+      <div style={style} className="container" ref={wrapperRef}></div>
+    </>
+  );
+}

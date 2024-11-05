@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+message PathPoint {
+  double x = 1;
+  double y = 2;
+}
+
+message DrawingData {
+  string strokeColor = 1;
+  int32 strokeWidth = 2;
+  repeated PathPoint paths = 3;
+}

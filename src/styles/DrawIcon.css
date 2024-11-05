@@ -1,0 +1,14 @@
+.DrawIcon{
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: black;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    cursor: pointer;
+}
+.DrawIcon svg{
+    color: white;
+    font-size: 18px;
+}

@@ -4,6 +4,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useSelector } from 'react-redux';
 const ConnectedUses = () => {
     const roomData = useSelector((state) => state.room);
+    console.log('rommData', roomData);
     const connectedUsers = roomData.connectedUsers;
 
     const noOfUsers = connectedUsers ? connectedUsers.length : 0;
@@ -17,7 +18,7 @@ const ConnectedUses = () => {
         </div>
         <div className='connectedUsers-body'>
             <div className='connectedUsers-body-wrapper'>
-
+            
                 {
                     connectedUsers && connectedUsers.length > 0 ?
                     connectedUsers.map((user) => (
@@ -26,6 +27,7 @@ const ConnectedUses = () => {
                         <div className='connected-user'>
                                 <div className='connected-user-profile'></div>
                                 <h4>{user.userName}</h4>
+                                {roomData.creatorId === user.userId && <p className='host'>HOST</p>}
                         </div>
                             <MoreHorizIcon />
                         </div>

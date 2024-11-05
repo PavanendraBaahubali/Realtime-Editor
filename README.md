@@ -63,7 +63,7 @@ A real-time collaborative text editor built using **React**, **Quill** for rich 
    - Enter a **Room Name** in the input field.
    - Click **Create** to set up the room.
 
-![join](./assets/create.gif)
+![create](./assets/create.gif)
 
 4. **Joining a Room**:
    - Go to the **Join Room** section.

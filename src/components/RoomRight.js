@@ -1,18 +1,27 @@
 import React from 'react'
-// import ChatMsg from './ChatMsg'
-// import Chat from './Chat'
 import '../styles/RoomRight.css'
-import ConnectedUses from './ConnectedUses'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Draw from './Draw';
+import { useDispatch } from 'react-redux';
+import { togglePopup } from '../ReduxSlices/PopupSlice';
 
 const RoomRight = () => {
+  const dispatch = useDispatch();
+  let isConnected = false;
+  const handleOnclick = () => {
+    isConnected = dispatch(togglePopup('connectedTop'))
+  }
   return (
-    <div className='RoomRight'>
-        {/* <ChatMsg /> */}
-        {/* <Chat /> */}
-        <div className='users-connected'>
-            <h5>Users connected</h5>
+    <div 
+    onBlur={isConnected = !isConnected}
+    className={isConnected ? 'RoomRight' : 'room-right-connected-close'}>
+        <div
+            onClick={handleOnclick}
+            className='users-connected'>
+                <AccountCircleIcon />
         </div>
-        <ConnectedUses />
+        
+        <Draw />
     </div>
   )
 }
