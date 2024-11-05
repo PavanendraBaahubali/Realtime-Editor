@@ -72,7 +72,7 @@ A real-time collaborative text editor built using **React**, **Quill** for rich 
 
 ![join](./assets/join.gif)
 
-5. **Chatting in a Room**:
+5. **Editing in a Room**:
    - Once inside the room, people can join the room with roomId. And whatever changes you made in the editor will reflect to other who are in the room.
 
 6. **Logging Out**: To log out, click on your profile icon in the top right corner and select **Logout**.
@@ -100,6 +100,9 @@ Consider this scenario:
 - In this case, rows 23 and 40 are locked. If another user tries to edit these rows, the system will detect a conflict and prevent unauthorized changes.
 
 This conflict-handling mechanism ensures smooth, uninterrupted collaboration while maintaining data integrity.
+
 ![join](./assets/conflict.gif)
+
+- As you can see from above, left side user typing something on a specific row, and righ side user tries to type something on same row. It detect typing conflict. And restrict the user to do so.
 
 
