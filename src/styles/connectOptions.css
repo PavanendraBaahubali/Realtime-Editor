@@ -1,0 +1,33 @@
+.connectOptions {
+  width: 35%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: bisque;
+  position: absolute;
+  right: 14px;
+  top: 40%;
+  box-sizing: border-box;
+  border: 1px solid gray;
+  gap: 5px;
+}
+.connect-option {
+  display: flex;
+  padding: 5px 10px 5px 10px;
+  gap: 5px;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.connect-option svg {
+  font-size: 14px;
+}
+.connect-option p {
+  margin: 0;
+  font-size: 14px;
+}
+.connect-option:hover {
+  background-color: rgb(160 198 239);
+  border-radius: 10px;
+}

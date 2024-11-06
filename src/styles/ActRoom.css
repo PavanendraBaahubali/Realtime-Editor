@@ -1,0 +1,34 @@
+.ActRoom {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  gap: 9px;
+  padding: 10px 30px 10px 30px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  border: 2px solid #f0f0f0;
+}
+.ActRoom:hover {
+  background-color: #ebebeb;
+}
+.room-title {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: flex-start;
+}
+.room-title h4 {
+  margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: left;
+}
+.room-title p {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 600;
+  color: gray;
+  text-align: left;
+  letter-spacing: 1px;
+}

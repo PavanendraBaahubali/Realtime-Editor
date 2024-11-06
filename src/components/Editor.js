@@ -30,7 +30,6 @@ export default function TextEditor({
   const userName = localStorage.getItem("userName");
 
   const [hasChanges, setHasChanges] = useState(false);
-  const [isTyping, setTyping] = useState(false);
 
   const userId = localStorage.getItem("userId");
   const debounce = useRef();
@@ -109,7 +108,7 @@ export default function TextEditor({
       socket.off("lock-activated", handleLock);
       socket.off("error", handleError);
     };
-  }, [userId, isTyping, getRowIdFromCursor, setError]);
+  }, [userId, getRowIdFromCursor, setError]);
 
   // Setup stopTyping and whoIsTyping
   const stopTyping = useCallback(() => {

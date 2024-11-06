@@ -85,8 +85,8 @@ const RoomEditor = () => {
                 key={userId}
                 style={{
                   position: "absolute",
-                  left: `${bounds.left + 48}px`,
-                  top: `${bounds.top - bounds.height + 25}px`,
+                  left: `${bounds.left + 38}px`,
+                  top: `${bounds.top - bounds.height + 40}px`,
                   // height: `${bounds.height}px`,
                   minWidth: "2%",
                   maxWidth: "10%",

@@ -1,0 +1,11 @@
+.ActiveRooms {
+  width: 100%;
+}
+.active-wrapper {
+  flex-direction: column-reverse;
+  gap: 10px;
+  display: flex;
+}
+.ActiveRooms h3 {
+  text-align: left;
+}
