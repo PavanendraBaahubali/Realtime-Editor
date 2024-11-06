@@ -9,3 +9,7 @@
 .ActiveRooms h3 {
   text-align: left;
 }
+.active-wrapper a {
+  text-decoration: none;
+  color: black;
+}

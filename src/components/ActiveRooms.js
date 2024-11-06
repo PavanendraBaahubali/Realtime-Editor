@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../styles/ActiveRooms.css";
 import ActRoom from "./ActRoom";
 import socket from "../socket";
+import { NavLink } from "react-router-dom";
 
 const ActiveRooms = () => {
   const [createdRooms, setCreatedRooms] = useState([]);
@@ -55,7 +56,9 @@ const ActiveRooms = () => {
       <div className="active-wrapper">
         {createdRooms.length > 0 &&
           createdRooms.map((room) => (
-            <ActRoom roomName={room.roomName} roomId={room._id} />
+            <NavLink to={`/room/${room._id}`}>
+              <ActRoom roomName={room.roomName} roomId={room._id} />
+            </NavLink>
           ))}
       </div>
     </div>

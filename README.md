@@ -14,11 +14,13 @@ A real-time collaborative text editor built using **React**, **Quill** for rich 
 ## Tech Stack
 
 ### Frontend
+
 - **React**
 - **Quill**
 - **Socket.IO**
 
 ### Backend
+
 - **Node.js**
 - **Express**
 - **Socket.IO**
@@ -26,12 +28,14 @@ A real-time collaborative text editor built using **React**, **Quill** for rich 
 - **MongoDB**
 
 ### Other Libraries
+
 - **dotenv**
 - **cors**
 
 ## Setup and Installation
 
 ### Prerequisites
+
 - **Node.js** (v14 or above)
 - **MongoDB** instance
 
@@ -43,13 +47,14 @@ A real-time collaborative text editor built using **React**, **Quill** for rich 
    git clone https://github.com/your-username/collaborative-text-editor.git
    cd collaborative-text-editor
 
-
+   ```
 
 2. **Usage**
 
 ## Usage Notes
 
 1. **Dummy Credentials**: Use these credentials to log in:
+
    - **email**: `ned@gmail.com`
    - **Password**: `ned`
 
@@ -75,6 +80,10 @@ A real-time collaborative text editor built using **React**, **Quill** for rich 
 5. **Editing in a Room**:
    - Once inside the room, people can join the room with roomId. And whatever changes you made in the editor will reflect to other who are in the room.
 
+![whoisTyping](./assets/whoisTyping.gif)
+
+- For the current user, the editor displays "You" on their cursor. All other users in the same room can see the typing user's actual username. This way, users see their own label as "You," while others see their username when they're typing.
+
 6. **Logging Out**: To log out, click on your profile icon in the top right corner and select **Logout**.
 
 ## Features
@@ -83,6 +92,7 @@ A real-time collaborative text editor built using **React**, **Quill** for rich 
 - **Room Creation**: Users can create new chat rooms with custom names.
 - **Room Joining**: Users can join existing chat rooms by selecting from a list or entering the room name.
 - **Concurrent**: Multiple users can't edit same row at the same time. The application use row level locking.
+
 ## Real-Time Conflict Handling
 
 Our application manages real-time editing conflicts by implementing row-level locking. Here’s how it works:
@@ -96,6 +106,7 @@ Our application manages real-time editing conflicts by implementing row-level lo
 ### Conflict Detection Example
 
 Consider this scenario:
+
 - **User A** is typing in row 23, and **User B** is editing row 40.
 - In this case, rows 23 and 40 are locked. If another user tries to edit these rows, the system will detect a conflict and prevent unauthorized changes.
 
@@ -104,5 +115,3 @@ This conflict-handling mechanism ensures smooth, uninterrupted collaboration whi
 ![join](./assets/conflict.gif)
 
 - As you can see from above, left side user typing something on a specific row, and righ side user tries to type something on same row. It detect typing conflict. And restrict the user to do so.
-
-
