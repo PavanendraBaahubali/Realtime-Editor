@@ -1,3 +1,6 @@
+# Live Url
+https://collab-66df3.web.app/editor
+
 # Collaborative Text Editor
 
 A real-time collaborative text editor built using **React**, **Quill** for rich text editing, **Socket.IO** for real-time communication, and **MongoDB** as the database. This project allows multiple users to collaborate on the same document, with changes reflected in real-time across all users' editors. Autosave functionality and conflict management mechanisms are implemented to ensure a seamless collaborative experience.
