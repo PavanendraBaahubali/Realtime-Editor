@@ -1,11 +1,10 @@
 import "../styles/Sidebar.css";
 import CreateRoom from "./CreateRoom";
-import HomeIcon from "@mui/icons-material/Home";
+// import HomeIcon from "@mui/icons-material/Home";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import NoMeetingRoomIcon from "@mui/icons-material/NoMeetingRoom";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { togglePopup } from "../ReduxSlices/PopupSlice";
@@ -19,10 +18,10 @@ const Sidebar = () => {
     <div className="Sidebar">
       <CreateRoom />
       <div className="side-nav">
-        <li>
+        {/* <li>
           <HomeIcon />
           Home
-        </li>
+        </li> */}
         <NavLink to="/editor">
           <li>
             <BorderColorIcon />
@@ -33,21 +32,17 @@ const Sidebar = () => {
         <NavLink to="/active-rooms">
           <li>
             <MeetingRoomIcon />
-            Active Rooms
+            Created Rooms
           </li>
         </NavLink>
 
         <li>
           <NoMeetingRoomIcon />
-          Closed Rooms
+          Joined Rooms
         </li>
         <li onClick={() => dispatch(togglePopup("join-room"))}>
           <GroupAddIcon />
           Join Room
-        </li>
-        <li>
-          <SpaceDashboardIcon />
-          Dash Board
         </li>
       </div>
       <button

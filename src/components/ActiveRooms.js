@@ -14,10 +14,7 @@ const ActiveRooms = () => {
   useEffect(() => {
     const hanldeCreatedRooms = ({ createdRooms }) => {
       console.log("createdRooms", createdRooms);
-      // setCreatedRooms((prevRooms) => [...prevRooms, createdRooms]);
       setCreatedRooms(createdRooms);
-      // setSkip((prevSkip) => prevSkip + limit);
-      // setIsLoading(false);
     };
 
     socket.on("createdRooms", hanldeCreatedRooms);
@@ -31,35 +28,21 @@ const ActiveRooms = () => {
     };
   }, [skip, userId]);
 
-  // Scroll event to load more rooms
-  // const handleScroll = useCallback(() => {
-  //   console.log("triggerd");
-  //   if (
-  //     window.innerHeight + document.documentElement.scrollTop >=
-  //       document.documentElement.offsetHeight - 10 &&
-  //     !isLoading
-  //   ) {
-  //     console.log("fetch data");
-  //     socket.emit("getCreatedRooms", { userId, skip, limit });
-  //     setIsLoading(true);
-  //   }
-  // }, [isLoading, skip, userId]);
-
-  // useEffect(() => {
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, [isLoading, handleScroll]);
-
   return (
     <div className="ActiveRooms">
-      <h3>Active Rooms</h3>
+      <h3>Created Rooms</h3>
       <div className="active-wrapper">
-        {createdRooms.length > 0 &&
+        {createdRooms.length > 0 ? (
           createdRooms.map((room) => (
             <NavLink to={`/room/${room._id}`}>
               <ActRoom roomName={room.roomName} roomId={room._id} />
             </NavLink>
-          ))}
+          ))
+        ) : (
+          <p style={{ textAlign: "left", fontWeight: "700px" }}>
+            No Created Rooms Were Found
+          </p>
+        )}
       </div>
     </div>
   );
